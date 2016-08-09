@@ -18,13 +18,15 @@ class Commit {
   constructor(instructions) {
 
     if (typeof(instructions) == 'string' ) {
-      let { id, diff }= this.fromJSON(instructions)
+      let { id, diff, ts }= this.fromJSON(instructions)
       this.id = id
       this.diff = diff
+      this.ts = ts
     }
     else if (instructions instanceof Array ) {
       this.diff = this.parseInstructions(instructions)
       this.id = crypto.randomBytes(20).toString('hex')
+      this.ts = new Date()
     }
     else throw new Error('Instructions should be an array')
 

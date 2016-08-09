@@ -1,5 +1,6 @@
 import { assert }  from 'chai'
 import Commit  from '../src/js/TopoQuery.commit.js'
+import moment from 'moment'
 
 const instructions  = [
     {
@@ -68,18 +69,24 @@ describe('Commit', () => {
     assert.notEqual(commitA.id, commitB.id)
   })
 
+  it('stores a date Object when created', () =>{
+    let commitA = new Commit(instructions)
+    assert.isTrue(moment(commitA.ts).isValid())
+  })
+
   it('does not accept empty instructions args at init', () =>{
     assert.throws(function() {
         new Commit([])
     }, Error)
   })
 
-  it('export/import JSON correctly', () =>{
+  it('export/import JSON correctly', () => {
     let commitA = new Commit(instructions)
     let j = commitA.toJSON()
     let commitB = new Commit(j)
     assert.equal(commitA.id, commitB.id)
     assert.deepEqual(commitA.diff, commitB.diff)
+    assert.isTrue(moment(commitA.ts).isValid())
   })
 
 })

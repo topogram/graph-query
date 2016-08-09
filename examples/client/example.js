@@ -77,7 +77,6 @@ const cy = initCytoscape()
 
 log('Hello network !')
 
-
 // init
 parseCommitsList()
 

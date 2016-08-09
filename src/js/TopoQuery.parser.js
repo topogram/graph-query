@@ -64,7 +64,9 @@ class TopoQuery {
       case 3:
         // by props
         selector = { 'type' : type }
-        s.split(' ').forEach( prop => selector[ prop.split(':')[1] ] = s.split(':')[2] )
+        selector[ s.split(':')[1] ] = s.split(':')[2]
+        // console.log(s.split(' '))
+        // console.log(selector);
         break;
       default:
         throw new Error('Selector ' + s + ' is too long : '+q)
@@ -75,7 +77,9 @@ class TopoQuery {
 
   /**
   * @name parseAction
-  * @param {String} action The action to be executed
+  * @param {String} a The action to be executed
+  * @param {String} type The type of elements (nodes or edges)
+  * @param {String} q The original query
   * @returns { Object }
   */
   parseAction(a, type, q) {
@@ -92,8 +96,9 @@ class TopoQuery {
   * @returns { Array } array of options properly parsed
   */
   parseOptions(action, opts, q) {
-    if (opts == undefined || opts.length == 0) throw new Error('Query options for '+ action +' can not be undefined : ' +q
-    )
+    if (opts == undefined || opts.length == 0)
+      throw new Error('Query options for '+ action +' can not be undefined : ' +q )
+
     let options = {}
 
     if (action == 'SET') {
@@ -105,12 +110,12 @@ class TopoQuery {
       return options
 
     } else if (action == 'LINK') {
-      const { selector } = this.parseSelector(...opts)
-      return selector
+      return this.parseSelector(...opts)
     } else {
       throw new Error('Unkown method '+ action +' in : ' +q)
     }
   }
+
 
   /**
   * The main function for the parser

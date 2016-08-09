@@ -85,9 +85,9 @@ describe('parser', () => {
 
       it('creates a target node as an option', ()=>{
         const { selector, action, options } = new TopoQuery('John loves Jim')
-        assert.equal(action, 'LINK')
         assert.deepEqual( selector, {'id' : 'John', 'type': 'nodes'} )
-        assert.deepEqual( options, [ {'id' : 'Jim'} ] )
+        assert.equal(action, 'LINK')
+        assert.deepEqual( options, {'id' : 'Jim', 'type' : 'nodes'} )
       })
     })
   })
@@ -115,7 +115,7 @@ describe('parser', () => {
       assert.deepEqual(new TopoQuery('node:John show').selector, { 'id' : 'John', 'type': 'nodes'})
       assert.deepEqual(new TopoQuery('edge:loves show').selector, { 'id' : 'loves', 'type': 'edges'})
       assert.deepEqual(new TopoQuery('edge:color:blue show').selector, { 'color' : 'blue', 'type': 'edges'})
-      assert.deepEqual(new TopoQuery('node:weight:green show').selector, { 'weight' : 'green', 'type': 'nodes'})
+      assert.deepEqual(new TopoQuery('node:weight:42 show').selector, { 'weight' : '42', 'type': 'nodes'})
     })
 
     it('should not accept weird selectors', ()=>{
@@ -123,7 +123,9 @@ describe('parser', () => {
     })
 
     it('should support expressions using blank spaces', ()=>{
-      assert.deepEqual(new TopoQuery('node:cyto:"[weight >= 50][height < 180]" show').selector, [{ 'cyto' : '[weight >= 50][height < 180]'}])
+      assert.deepEqual(
+        new TopoQuery('node:cyto:"[weight >= 50][height < 180]" show').selector,
+        { 'cyto' : '[weight >= 50][height < 180]', 'type' : 'nodes' })
     })
 
   })
@@ -155,9 +157,7 @@ describe('parser', () => {
 
   describe('queries OK', () => {
     it('should parse all those queries correctly', () => {
-      const parser = new TopoQuery()
       const instructions = queries.map(q => new TopoQuery(q))
-      // console.log(instructions)
       assert.equal(queries.length, instructions.length)
     })
   })

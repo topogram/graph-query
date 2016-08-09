@@ -1,26 +1,7 @@
 import { assert }  from 'chai'
 import TopoQueryParser  from '../src/js/TopoQuery.parser.js'
 
-const queries = [
-  'nodes show',
-  'edges show',
-  'georges likes dog',
-  'cat hates dog',
-  'dog likes cat',
-  'groups',
-  'dog show',
-  'type:animals show',
-  'cat to dog show',
-  'type:animal likes john',
-  'type:animal likes john hide',
-  'type:cats, name:"kitty"',
-  'clear / reset',
-  'cat set type:animals',
-  'cat set color:#FFFFFF longitude:1,23 latitude:1,23 starred:false',
-  'node:cat edges',
-  'node:type:animals edges',
-  'n:cat'
-]
+import queries from './queries.js'
 
 describe('parser', () => {
 
@@ -43,10 +24,29 @@ describe('parser', () => {
       assert.equal(q, 'nodes')
     })
 
-    it('should only accept existing actions', ()=>{
+    it('should only accept existing actions for edges', ()=>{
       assert.throws(function() {
-        parser.parse('nodes dance')
+        parser.parse('edge:bla dance')
       }, Error)
+    })
+
+    describe('link creation', () => {
+
+      it('requires a target node as an option', ()=>{
+        assert.throws(function() {
+          parser.parse('bla dance')
+        }, Error)
+      })
+
+      it('creates a target node as an option', ()=>{
+        const { type, q, selector, action, options } = parser.parse('John loves Jim')
+        assert.equal(action, 'LINK')
+        assert.equal(type, 'nodes')
+        assert.equal(q, 'John loves Jim')
+        assert.deepEqual( selector, [ {'id' : 'John'} ] )
+        assert.deepEqual( options, [ {'id' : 'Jim'} ] )
+      })
+
     })
   })
 
@@ -127,5 +127,13 @@ describe('parser', () => {
 
   })
 
-    // assert.deepEqual(parser.parse('John show').elements, ['John'])
+  describe('queries OK', () => {
+    it('should parse all those queries correctly', () => {
+      const parser = new TopoQueryParser()
+      const instructions = queries.map(q => parser.parse(q))
+      // console.log(instructions)
+      assert.equal(queries.length, instructions.length)
+    })
+  })
+
 })

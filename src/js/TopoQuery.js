@@ -1,16 +1,8 @@
 import Commit from './TopoQuery.commit.js'
-// import TopoQueryParser from './TopoQuery.parser.js'
+import TopoQueryParser from './TopoQuery.parser.js'
 
-
-class TopoQuery {
-  constructor() {
-
-  }
-}
-
-export default TopoQuery
-global.TopoQuery = TopoQuery
-window.TopoQuery = TopoQuery
+global.TopoQueryParser = TopoQueryParser
+window.TopoQueryParser = TopoQueryParser
 
 // add commit
 global.Commit = Commit

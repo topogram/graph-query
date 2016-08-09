@@ -1,11 +1,14 @@
 /**
  *
- * Commit
+ * The Commit class is will store a diff that can be applied to a graph
+ * Each commit has a unique ID.
+ * Each commit is serializable, to make it easy to be stored and create undo/redo.
+ *
  * @name Commit
  * @kind class
  * @param {Array} instructions A list of RAW instructions
  * @param {String} instructions  A JSON-stringified Commit object
- * @example var commit = new Commit(...);
+ * @example var commit = new Commit(...)
  */
 
 import crypto from 'crypto'
@@ -37,8 +40,6 @@ class Commit {
   parseInstructions(instructions) {
 
     if( instructions.length == 0 )  throw new Error('Instructions array can not be empty')
-
-//     console.log(instructions.length+ ' instructions')
 
     // final diff
     let diff =  {

@@ -1,26 +1,26 @@
 const gulp = require( 'gulp' ),
     browserify = require( 'browserify' ),
-    babelify = require( 'babelify' ),
     source = require( 'vinyl-source-stream' ),
     buffer = require( 'vinyl-buffer' ),
     uglify = require( 'gulp-uglify' ),
     sourcemaps = require( 'gulp-sourcemaps' ),
-    autoprefix = require( 'gulp-autoprefixer' ),
-    imagemin = require( 'gulp-imagemin' ),
     livereload = require( 'gulp-livereload' ),
     eslint = require('gulp-eslint'),
     mocha = require('gulp-mocha'),
     envify = require('envify'),
     documentation = require('gulp-documentation'),
-    babel = require('babel-core/register'),
-    istanbul = require('gulp-istanbul');
+    babel = require('babel-core/register')
+    // istanbul = require('gulp-istanbul');
 
 
 const TEST_FILES = './tests/*.test.js'
+const JS_FILES = './src/js/**/*.js'
+const SRC_FILE = './src/js/TopoQuery.js'
+
 
 gulp.task( 'dev', () => {
     return browserify( {
-            entries: './src/topoquery.js',
+            entries: SRC_FILE,
             debug: true
         } )
         .on('error', function( err ){
@@ -56,7 +56,7 @@ gulp.task( 'test', /*['pre:coverage'],*/ () => {
       {
           read: false,
           compilers: [
-            'js:babel-core/register',
+            'js:babel-core/register'
         ]
       })
       .pipe( mocha( { reporter:'nyan' } ) )
@@ -71,7 +71,7 @@ gulp.task( 'lint', () => {
 
 gulp.task( 'build', [ 'test', 'lint' ], () => {
     return browserify( {
-            entries: './src/topoquery.js',
+            entries: SRC_FILE,
             debug: true
         } )
         .transform( 'babelify', {
@@ -79,7 +79,7 @@ gulp.task( 'build', [ 'test', 'lint' ], () => {
         } )
         .transform(envify)
         .bundle()
-        .pipe( source( 'topooquery.min.js' ) )
+        .pipe( source( 'topoquery.min.js' ) )
         .pipe( buffer() )
         .pipe( sourcemaps.init() )
         .pipe( uglify() )
@@ -87,7 +87,7 @@ gulp.task( 'build', [ 'test', 'lint' ], () => {
         .pipe( gulp.dest( './dist/js' ) )
 } )
 
-gulp.task('docs', () => {
+gulp.task('doc', () => {
     gulp.src( [ './src/**/*.js' ] )
         .pipe( documentation( { shallow: true, format: 'html' } ) )
         .pipe( gulp.dest( 'docs' ) )

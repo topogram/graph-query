@@ -1,5 +1,5 @@
 import { assert }  from 'chai'
-import Commit  from '../src/Commit.js'
+import Commit  from '../src/js/TopoQuery.commit.js'
 
 const instructions  = [
     {
@@ -81,5 +81,5 @@ describe('Commit', () => {
     assert.equal(commitA.id, commitB.id)
     assert.deepEqual(commitA.diff, commitB.diff)
   })
-  
+
 })

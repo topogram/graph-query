@@ -37,61 +37,6 @@ describe('parser', () => {
     assert.deepEqual( options, null )
   })
 
-  describe('actions', () => {
-
-    it('should accept no actions and default to show ', ()=>{
-      const { action } = new TopoQuery('nodes')
-      assert.equal(action, 'SHOW')
-    })
-
-    it('should only accept existing actions for edges', ()=>{
-      assert.throws(function() {
-        new TopoQuery('edge:bla dance')
-      }, Error)
-    })
-
-    describe('node creation', () => {
-
-      it('should allow node creation with options', ()=>{
-
-        let q = 'node add id:zappa color:blue name:"Frank Zappa" longitude:"1.23" latitude:"1.23" starred:false'
-
-        const { selector, action, options } = new TopoQuery(q)
-        console.log(selector);
-
-        assert.deepEqual( selector, { id : null, 'type': 'nodes' } )
-        assert.equal(action, 'ADD')
-        assert.deepEqual( options, {
-          id : 'zappa',
-          color : 'blue',
-          name : 'Frank Zappa',
-          longitude: 1.23,
-          latitude: 1.23,
-          starred : false
-        })
-
-      })
-
-    })
-
-
-    describe('link creation', () => {
-
-      it('requires a target node as an option', ()=>{
-        assert.throws(function() {
-          new TopoQuery('bla dance')
-        }, Error)
-      })
-
-      it('creates a target node as an option', ()=>{
-        const { selector, action, options } = new TopoQuery('John loves Jim')
-        assert.deepEqual( selector, {'id' : 'John', 'type': 'nodes'} )
-        assert.equal(action, 'LINK')
-        assert.deepEqual( options, {'id' : 'Jim', 'type' : 'nodes'} )
-      })
-    })
-  })
-
   describe('selector', () => {
 
     it('should differentiate nodes and edges', () => {
@@ -130,7 +75,65 @@ describe('parser', () => {
 
   })
 
-  describe('options', () => {
+  describe('actions', () => {
+
+    it('when no actions specified, default to show ', ()=>{
+      const { action } = new TopoQuery('nodes')
+      assert.equal(action, 'SHOW')
+    })
+
+    it('should only accept existing actions', ()=>{
+      assert.throws(function() {
+        new TopoQuery('edge:bla dance')
+      }, Error)
+
+      assert.throws(function() {
+        new TopoQuery('node dance')
+      }, Error)
+    })
+  })
+})
+
+describe('commands', () => {
+
+  describe('ADD (node creation)', () => {
+    it('should allow node creation with options', ()=>{
+
+      let q = 'node add id:zappa color:blue name:"Frank Zappa" longitude:"1.23" latitude:"1.23" starred:false'
+
+      const { selector, action, options } = new TopoQuery(q)
+      assert.deepEqual( selector, { id : null, 'type': 'nodes' } )
+      assert.equal(action, 'ADD')
+      assert.deepEqual( options, {
+        id : 'zappa',
+        color : 'blue',
+        name : 'Frank Zappa',
+        longitude: 1.23,
+        latitude: 1.23,
+        starred : false
+      })
+
+    })
+  })
+
+  describe('LINK (link creation)', () => {
+
+    it('requires a target node as an option', ()=>{
+      assert.throws(function() {
+        new TopoQuery('bla dance')
+      }, Error)
+    })
+
+    it('creates a target node as an option', ()=>{
+      const { selector, action, options } = new TopoQuery('John loves Jim')
+      assert.deepEqual( selector, {'id' : 'John', 'type': 'nodes'} )
+      assert.equal(action, 'LINK')
+      assert.deepEqual( options, {'id' : 'Jim', 'type' : 'nodes'} )
+    })
+
+  })
+
+  describe('SET (update properties)', () => {
 
     it('should require options with SET action', ()=>{
       assert.throws(function() {
@@ -155,11 +158,27 @@ describe('parser', () => {
 
   })
 
-  describe('queries OK', () => {
-    it('should parse all those queries correctly', () => {
-      const instructions = queries.map(q => new TopoQuery(q))
-      assert.equal(queries.length, instructions.length)
-    })
-  })
+  describe('MERGE : merge two nodes', () => {
 
+    it('has required options', ()=>{
+      assert.throws(function() {
+        new TopoQuery('john merge')
+      }, Error)
+    })
+
+    it('should returns two selectors', () => {
+      const { selector, action, options } = new TopoQuery('John merge Jim')
+      assert.equal(action, 'MERGE')
+      assert.deepEqual( selector, { 'id' : 'John', 'type' : 'nodes' } )
+      assert.deepEqual( options, { 'id' : 'Jim', 'type' : 'nodes' } )
+    })
+
+  })
+})
+
+describe('queries OK', () => {
+  it('should parse all those queries correctly', () => {
+    const instructions = queries.map(q => new TopoQuery(q))
+    assert.equal(queries.length, instructions.length)
+  })
 })

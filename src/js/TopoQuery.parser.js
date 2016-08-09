@@ -12,7 +12,7 @@ class TopoQuery {
     if ( q == undefined ) throw new Error('Empty query : TopoQuery requires a query')
     else if ( typeof(q) != 'string' ) throw new Error('Query should be a string : '+ q)
 
-    this.actions = ['add', 'delete', 'set', 'show', 'hide' ] // + LINK
+    this.actions = ['add', 'delete', 'set', 'show', 'hide', 'merge' ] // + LINK
 
     // parse
     const { selector, action, options } = this.parse(q)
@@ -110,7 +110,7 @@ class TopoQuery {
       })
       return options
 
-    } else if (action == 'LINK') {
+    } else if (action == 'LINK' || action == 'MERGE' ) {
       return this.parseSelector(...opts)
     } else {
       throw new Error('Unkown method '+ action +' in : ' +q)
@@ -137,7 +137,7 @@ class TopoQuery {
 
     let action = this.parseAction(query[1])
 
-    let options = ( ['SET', 'LINK', 'ADD'].indexOf(action) > -1 ) ? this.parseOptions( action, query.slice(2), q ) : null
+    let options = ( ['SET', 'LINK', 'ADD', 'MERGE'].indexOf(action) > -1 ) ? this.parseOptions( action, query.slice(2), q ) : null
 
     return {
       selector,

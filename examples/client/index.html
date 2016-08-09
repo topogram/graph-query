@@ -51,15 +51,32 @@
     </style>
 </head>
 <body>
-  <h1>Commits example</h1>
+  <h1>Topoquery example</h1>
   <div id="wrapper">
+
+    <form name="queryForm" onsubmit="event.preventDefault(); submitQuery()" method="post">
+      Query: <input type="text" name="query">
+      <input type="submit" value="Submit">
+    </form>
+
     <div id="cy"></div>
     <div id="log"></div>
     <div id="commits"></div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/2.7.7/cytoscape.min.js" defer></script>
-  <script src="../../dist/js/topoquery.js" defer></script>
-  <script src="./example.js" defer></script>
+
+  <script src="../../dist/js/topoquery.js"></script>
+
+  <script>
+    let parser = new TopoQueryParser()
+
+    function submitQuery() {
+      const q = document.forms["queryForm"]["query"].value
+      console.log(parser.parse(q))
+    }
+
+  </script>
+  <!-- <script src="./commits.js" defer></script> -->
 </body>
 </html>

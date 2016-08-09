@@ -45,25 +45,29 @@ class TopoQuery {
       case 1:
         switch(s) {
           case 'nodes' :
-            selector = { 'id' : '*', 'type' : 'nodes'}
+            selector = { 'id' : '*', 'elType' : 'nodes'}
             break;
           case 'edges' :
-            selector = { 'id' : '*', 'type' : 'edges'}
+            selector = { 'id' : '*', 'elType' : 'edges'}
             break;
           default:
             // single node
-            let id = (s == 'node')? null : s
-            selector = { 'id' : id, 'type' : 'nodes'}
+            let id = (s == 'node') ? null : s
+            selector = { 'id' : id, 'elType' : 'nodes'}
             break;
         }
         break;
       case 2:
         // single element by ID
-        selector = { 'id' : s.split(':')[1] , 'type' : type };
+        selector = { 'elType' : type };
+        const split = s.split(':')
+        if (split[0] === 'node' || split[0] === 'edge' ) selector.id = split[1]
+        else if (split[0] === 'elType') throw new Error('Reserved word "elType" in ' + q )
+        else selector[ split[0] ] = split[1]
         break;
       case 3:
         // by props
-        selector = { 'type' : type }
+        selector = { 'elType' : type }
         selector[ s.split(':')[1] ] = s.split(':')[2]
         // console.log(s.split(' '))
         // console.log(selector);

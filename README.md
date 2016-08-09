@@ -12,10 +12,8 @@
 It is super simple :
 
 * You input **queries** in plain text or via command-line to select nodes / edges and apply actions on them.
-* All modifications are **stored using JSON serializable commit objects**, so any changes can easily be done / undone / moderated / etc
-
-
-Topoquery is **database agnostic** and returns commits describing changes as JSON objects. You can store the data as you wish, using a database, plain files or just even an array depending on your needs.
+* All modifications are stored using **commits**, so any changes can easily be done / undone / moderated / etc
+* Everything is serializable in **JSON**, so you can store the data using databases, plain files or just a simple array.
 
 It works with node or in the browser -- see the [`/examples`](/examples) folder.
 

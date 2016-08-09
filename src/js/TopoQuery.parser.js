@@ -1,20 +1,33 @@
-// import Commit from './TopoQuery.commit.js'
-
 /**
  * TopoQueryParser is a parser for topogram-style query for network manipulations
  *
- * @name TopoQueryParser
+ * @name TopoQuery
  * @kind class
- * @example const parser = new TopoQueryParser();
+ * @param {String} q The query
+ * @example const q = new TopoQuery('nodes show');
  */
-class TopoQueryParser {
-  constructor() {
-    // this.options = options || {}
-    // this.currentSelection
+class TopoQuery {
+
+  constructor(q) {
+    if ( q == undefined ) throw new Error('Empty query : TopoQuery requires a query')
+    else if ( typeof(q) != 'string' ) throw new Error('Query should be a string : '+ q)
 
     this.actions = ['add', 'delete', 'set', 'show', 'hide' ] // + LINK
-  }
 
+    // parse
+    const { selector, action, options } = this.parse(q)
+
+    this.selector = selector
+    this.action = action
+    this.options = options
+
+    return {
+      q,
+      selector,
+      action,
+      options
+    }
+  }
 
   /**
   * @name parseSelector
@@ -26,38 +39,38 @@ class TopoQueryParser {
     let type = 'nodes' // default type
     if (s.slice(0, 4) == 'edge') type = 'edges'
 
-    let selector = []
+    let selector = {}
 
     switch(s.split(':').length) {
       case 1:
         switch(s) {
           case 'nodes' :
-            selector.push({ 'id' : '*'}); break;
+            selector = { 'id' : '*', 'type' : 'nodes'}
+            break;
           case 'edges' :
-            selector.push({ 'id' : '*'}); break;
+            selector = { 'id' : '*', 'type' : 'edges'}
+            break;
           default:
             // single node
-            selector.push({ 'id' : s}); break;
+            let id = (s == 'node')? null : s
+            selector = { 'id' : id, 'type' : 'nodes'}
+            break;
         }
         break;
       case 2:
         // single element by ID
-        selector.push({ 'id' : s.split(':')[1] });
+        selector = { 'id' : s.split(':')[1] , 'type' : type };
         break;
       case 3:
         // by props
-        let props = {}
-        props[s.split(':')[1]] = s.split(':')[2]
-        selector.push(props);
+        selector = { 'type' : type }
+        s.split(' ').forEach( prop => selector[ prop.split(':')[1] ] = s.split(':')[2] )
         break;
       default:
         throw new Error('Selector ' + s + ' is too long : '+q)
     }
 
-    return {
-      type,
-      selector
-    }
+    return selector
   }
 
   /**
@@ -108,19 +121,19 @@ class TopoQueryParser {
   */
   parse(q) {
 
-    // support complex expressions using blank spaces
+    // split by blank spaces with doublequotes expression support
     const query = q.match(/(?:[^\s"]+|"[^"]*")+/g)
-                    .map( s => s.replace(/\"/g, '') ) // delete quotemarks
+                    .map( s => s.replace(/\"/g, '') ) // delete quotemarks from results
 
-    let { type, selector } = this.parseSelector( query[0] )
-    let action = this.parseAction(query[1], type)
+    // get the selector
+    let selector = this.parseSelector( query[0] )
+
+    let action = this.parseAction(query[1])
 
     let options = ( action == 'SET' || action == 'LINK' ) ? this.parseOptions( action, query.slice(2), q ) : null
 
     return {
-      q,
       selector,
-      type,
       action,
       options
     }
@@ -129,4 +142,4 @@ class TopoQueryParser {
 }
 
 
-export default TopoQueryParser
+export default TopoQuery

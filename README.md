@@ -2,7 +2,7 @@
 
 **Topoquery** is a simple query system to create and manipulate networks and graphs.
 
-*" Why? "*, you may wonder. A small, simple, portable and lightweight network language does not exists yet.
+*"But why ?"*, you may wonder. Because there is no simple, portable and lightweight language to write and store networks. Also because [Cypher](https://neo4j.com/developer/cypher-query-language/) and [Gremlin](https://github.com/tinkerpop/gremlin/wiki) gives me headaches and does not help to store successive states of your graphs.
 
 
 ## How it Works
@@ -14,7 +14,7 @@ It is super simple :
 * All modifications are **stored using JSON serializable commit objects**, so any changes easily can be done / undone / moderated
 
 
-Topoquery is **database agnostic** and returns commits describing changes as JSON objects. You can store the data as you wish, using a database, plain files or just an array, depending on your needs.
+Topoquery is **database agnostic** and returns commits describing changes as JSON objects. You can store the data as you wish, using a database, plain files or just even an array depending on your needs.
 
 It works with node or in the browser -- see the [`/examples`](/examples) folder.
 

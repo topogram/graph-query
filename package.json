@@ -15,7 +15,7 @@
     "query"
   ],
   "bin": {
-    "topoquery": "cli.js"
+    "topoquery": "bin/cli.js"
   },
   "author": "Clément Renaud <hi@clementrenaud.com> (http://clementrenaud.com)",
   "license": "MIT",

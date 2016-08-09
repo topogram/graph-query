@@ -1,92 +1,93 @@
 import { assert }  from 'chai'
 import Commit  from '../src/js/TopoQuery.commit.js'
+import TopoQuery  from '../src/js/TopoQuery.parser.js'
 import moment from 'moment'
+import queries from './queries.js'
 
-const instructions  = [
-    {
-      action : 'ADD',
-      type : 'nodes',
-      elements : [
-        { 'id' : '1', 'name' : 'A'},
-        { 'id' : '2', 'name' : 'B'},
-        { 'id' : '3', 'name' : 'C'}
-      ]
-    },
-    {
-      action : 'ADD',
-      type : 'edges',
-      elements : [
-        { 'id' : 'edgeA', 'source' : '1', 'target' : '2'},
-        { 'id' : 'edgeB', 'source' : '1', 'target' : '3'},
-        { 'id' : 'edgeC', 'source' : '2', 'target' : '3'}
-      ]
-    },
-    {
-      action : 'DELETE',
-      elements : [
-        'edgeB'
-      ],
-      type : 'edges'
-    },
-    {
-      action : 'ADD',
-      elements : [
-        { 'id' : 'edgeD', 'source' : '3', 'target' : '2'},
-        { 'id' : 'edgeE','source' : '5', 'target' : '3'}
-      ],
-      type : 'edges'
-    },
-    {
-      action : 'DELETE',
-      elements : ['1'],
-      type : 'nodes'
-    },
-    {
-      action : 'ADD',
-      elements  : [
-        '4',
-        '5',
-        '6'
-      ],
-      type: 'nodes'
-    },
-    {
-      action : 'UPDATE',
-      elements : [
-        { 'ids' : ['2'],  'updates' : { 'name' : 'yeepeeee!' } }
-      ],
-      type: 'nodes'
-    }
+const qs = [
+  'node add id:Jon color:blue',
+  'node add id:Jack',
+  'node add id:Joe',
+  'Joe likes Jack',
+  'Jon hates Jack',
+  'Jon ignores Jack'
 ]
 
 describe('Commit', () => {
 
-  it('has a unique ID', () => {
-    let commitA = new Commit(instructions)
-    let commitB = new Commit(instructions)
-    assert.equal(typeof(commitA.id), 'string')
-    assert.isAtLeast(commitA.id.length, 20)
-    assert.notEqual(commitA.id, commitB.id)
+  const instruction = new TopoQuery('Joe loves Jack')
+  const instructions = qs.map(q => new TopoQuery(q) )
+
+  describe('init', () => {
+    it('does not accept empty params', () =>{
+      assert.throws(function() {
+          new Commit()
+      }, Error)
+    })
+
+    it('does not accept an empty Array', () =>{
+      assert.throws(function() {
+          new Commit([])
+      }, Error)
+    })
+
+    it('does not accept weird objects', () =>{
+      assert.throws(function() {
+          new Commit({ 'bla' : 'loves'})
+      }, Error)
+    })
+
+    it('does accept a single instruction', () =>{
+      new Commit(instruction)
+    })
+
+    it('does accept an array of instructions', () =>{
+      new Commit(instructions)
+    })
   })
 
-  it('stores a date Object when created', () =>{
-    let commitA = new Commit(instructions)
-    assert.isTrue(moment(commitA.ts).isValid())
+  describe('storage', () => {
+
+    it('has a unique ID', () => {
+      let commitA = new Commit(instruction)
+      let commitB = new Commit(instruction)
+      assert.equal(typeof(commitA.id), 'string')
+      assert.isAtLeast(commitA.id.length, 20)
+      assert.notEqual(commitA.id, commitB.id)
+    })
+
+    it('stores a date Object when created', () =>{
+      let commitA = new Commit(instruction)
+      assert.isTrue(moment(commitA.ts).isValid())
+    })
+
+    it('export/import JSON correctly', () => {
+      let commitA = new Commit(instruction)
+      let j = commitA.toJSON()
+      let commitB = new Commit(j)
+      assert.equal(commitA.id, commitB.id)
+      assert.deepEqual(commitA.diff, commitB.diff)
+      assert.isTrue(moment(commitA.ts).isValid())
+      assert.isTrue(moment(commitB.ts).isValid())
+    })
+
   })
 
-  it('does not accept empty instructions args at init', () =>{
-    assert.throws(function() {
-        new Commit([])
-    }, Error)
+  describe('features', () =>{
+
+    it('should store creation of nodes', () =>{
+      let c = new Commit(instruction)
+      assert.equal(c.diff.add.length, 1)
+    })
+
+    it('should store creation of nodes', () =>{
+      let c = new Commit(instructions)
+      assert.equal(c.diff.add.length, 6)
+      console.log(c.diff);
+    })
   })
 
-  it('export/import JSON correctly', () => {
-    let commitA = new Commit(instructions)
-    let j = commitA.toJSON()
-    let commitB = new Commit(j)
-    assert.equal(commitA.id, commitB.id)
-    assert.deepEqual(commitA.diff, commitB.diff)
-    assert.isTrue(moment(commitA.ts).isValid())
+  it('should work with a bunch of queries', () => {
+    let c = new Commit( queries.map(q => new TopoQuery(q)) )
   })
-
 })

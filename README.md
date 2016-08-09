@@ -17,6 +17,64 @@ It is super simple :
 
 It works with node or in the browser -- see the [`/examples`](/examples) folder.
 
+### Example
+
+```js
+
+let query = new Query('node add color:blue name:"Frank Zappa" longitude:"1,23" latitude:"1,23" starred:false')
+
+console.log(query)
+
+/*
+  {
+    q: 'node add color:blue name:"Frank Zappa" longitude:"1,23" latitude:"1,23" starred:false',
+    selector: { id: null, elType: 'nodes' },
+    action: 'ADD',
+    options: {
+      color: 'blue',
+      name: 'Frank Zappa',
+      longitude: '1,23',
+      latitude: '1,23',
+      starred: false
+    }
+  }
+*/
+
+```
+
+```js
+
+const qs = [
+  'node add id:Jon color:blue',
+  'node add id:Jack',
+  'node add id:Joe',
+  'Joe likes Jack',
+  'Jon hates Jack',
+  'Jon ignores Jack',
+]
+
+const queries = qs.map(q => new Query(q) )
+
+const commit = new Commit(...queries)
+
+console.log( commit )
+
+/*
+{ add:
+   [ { id: 'Jon', elType: 'nodes', color: 'blue' },
+     { id: 'Jack', elType: 'nodes' },
+     { id: 'Joe', elType: 'nodes' },
+     { id: 'Jack', elType: 'nodes' },
+     { id: 'Jack', elType: 'nodes' },
+     { id: 'Jack', elType: 'nodes' }
+   ],
+  update: [],
+  delete: []
+}
+*/
+
+```
+
 ## Query structure
 
     selector [ command ] [ options ]
@@ -26,6 +84,8 @@ ex.
 * `John` `show`
 * `type:animals` `hide`
 * `dog likes bones` `set` `type:normal`
+
+The query will returns a JSON object containing the command
 
 
 ### Commands

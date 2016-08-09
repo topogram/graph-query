@@ -47,5 +47,8 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   },
-  "homepage": "https://github.com/topogram/topoquery#readme"
+  "homepage": "https://github.com/topogram/topoquery#readme",
+  "dependencies": {
+    "deep-equal": "^1.0.1"
+  }
 }

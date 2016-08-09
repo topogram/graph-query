@@ -30,38 +30,31 @@ const instructions  = [
     {
       action : 'DELETE',
       elements : [
-        'edgeB'
+        'edgeB', 'edgeA'
       ],
       type : 'edges'
     },
     {
       action : 'ADD',
+      elements  : [
+        { 'id' : '4', 'name' : 'D'},
+        { 'id' : '5', 'name' : 'E'},
+        { 'id' : '6', 'name' : 'F'}
+      ],
+      type: 'nodes'
+    },
+    {
+      action : 'ADD',
       elements : [
-        { 'id' : 'edgeD', 'source' : '3', 'target' : '2'},
+        { 'id' : 'edgeD', 'source' : '3', 'target' : '4'},
         { 'id' : 'edgeE','source' : '5', 'target' : '3'}
       ],
       type : 'edges'
     },
     {
       action : 'DELETE',
-      elements : ['1'],
+      elements : ['6'],
       type : 'nodes'
-    },
-    {
-      action : 'ADD',
-      elements  : [
-        '4',
-        '5',
-        '6'
-      ],
-      type: 'nodes'
-    },
-    {
-      action : 'UPDATE',
-      elements : [
-        { 'ids' : ['2'],  'updates' : { 'name' : 'yeepeeee!' } }
-      ],
-      type: 'nodes'
     }
   ]
 
@@ -79,7 +72,11 @@ divCommits.appendChild(commitsList)
 
 const logger = document.getElementById('log')
 
+// graph
+const cy = initCytoscape()
+
 log('Hello network !')
+
 
 // init
 parseCommitsList()
@@ -149,6 +146,84 @@ function executeCommits() {
   log('----------------------------------')
   log(''+Nodes.length + ' nodes '+ Edges.length + ' edges')
   log('############################')
+
+  updateCy()
+}
+
+// cytoscape
+function parseCyElements() {
+
+  let nodes = Nodes.map( (n,i) => (
+    {
+      data : {
+        id : n.id,
+        name : n.name
+      },
+      group : 'nodes',
+      position : {
+        x: i*75 + 200,
+        y : i%2*150 + 200
+      }
+    })
+  )
+
+  let edges = Edges.map(e => (
+    {
+      data : {
+        id : e.id,
+        name : e.name,
+        source : e.source,
+        target : e.target
+      },
+      group : 'edges'
+    })
+  )
+
+  // Edges.map(e => console.log(e))
+  return nodes.concat(edges)
+}
+
+function updateCy() {
+  let elements = parseCyElements()
+  console.log(elements);
+  cy.remove('*')
+  cy.json({ elements : elements })
+}
+
+function initCytoscape() {
+  return cytoscape({
+    container: document.getElementById('cy'),
+    boxSelectionEnabled: false,
+    autounselectify: true,
+
+    layout: {
+      name: 'random'
+    },
+
+    elements: [],
+
+    style: [
+      {
+        selector: 'node',
+        style: {
+          'height': 20,
+          'width': 20,
+          'background-color': '#18e018'
+        }
+      },
+
+      {
+        selector: 'edge',
+        style: {
+          'curve-style': 'haystack',
+          'haystack-radius': 0,
+          'width': 5,
+          'opacity': 0.5,
+          'line-color': '#a2efa2'
+        }
+      }
+    ]
+  })
 }
 
 // fake DB methods

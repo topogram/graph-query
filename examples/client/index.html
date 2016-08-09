@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Topoquery - Example</title>
+
+    <style>
+        html, body{
+            height:100%;
+        }
+        body {
+          margin: 0;
+          padding: 0;
+          position: relative;
+        }
+        #log {
+          position: absolute;
+          top:0;
+          right: 0;
+          overflow: scroll;
+        }
+        #commit {
+          position: absolute;
+          top:0;
+          left: 0;
+        }
+    </style>
+</head>
+<body>
+  <div id="commits"></div>
+  <div id="log"></div>
+  <script src="../../dist/js/topoquery.js" defer></script>
+  <script src="./example.js" defer></script>
+</body>
+</html>

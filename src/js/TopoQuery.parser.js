@@ -42,16 +42,16 @@ class TopoQueryParser {
         break;
       case 2:
         // single element by ID
-        selector.push({ 'id' : s.split(':')[1] }); break;
+        selector.push({ 'id' : s.split(':')[1] });
+        break;
       case 3:
         // by props
         let props = {}
         props[s.split(':')[1]] = s.split(':')[2]
-        selector.push(props); break;
+        selector.push(props);
         break;
       default:
         throw new Error('Selector ' + s + ' is too long : '+q)
-        break;
     }
 
     return {
@@ -80,7 +80,7 @@ class TopoQueryParser {
   */
   parseOptions(action, opts, q) {
     if (opts == undefined || opts.length == 0) throw new Error('Query options for '+ action +' can not be undefined : ' +q
-  )
+    )
     let options = {}
 
     if (action == 'SET') {
@@ -98,7 +98,6 @@ class TopoQueryParser {
       throw new Error('Unkown method '+ action +' in : ' +q)
     }
   }
-
 
   /**
   * The main function for the parser

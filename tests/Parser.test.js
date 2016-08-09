@@ -50,29 +50,29 @@ describe('parser', () => {
       }, Error)
     })
 
-    // describe('node creation', () => {
-    //
-    //   it('should allow node creation with options', ()=>{
-    //
-    //     let q = 'node add id:zappa color:blue name:"Frank Zappa" longitude:"1,23" latitude:"1,23" starred:false'
-    //
-    //     const { type, query, selector, action, options } = new TopoQuery(q)
-    //     console.log(selector);
-    //
-    //     assert.deepEqual( selector, { id : null, 'type': 'nodes' } )
-    //     assert.equal(q, query)
-    //     assert.equal(action, 'ADD')
-    //     assert.deepEqual( options, [ {
-    //       color : 'blue',
-    //       name : 'Frank Zappa',
-    //       longitude: '1,23',
-    //       latitude: '1,23',
-    //       starred : false
-    //     } ])
-    //
-    //   })
-    //
-    // })
+    describe('node creation', () => {
+
+      it('should allow node creation with options', ()=>{
+
+        let q = 'node add id:zappa color:blue name:"Frank Zappa" longitude:"1.23" latitude:"1.23" starred:false'
+
+        const { selector, action, options } = new TopoQuery(q)
+        console.log(selector);
+
+        assert.deepEqual( selector, { id : null, 'type': 'nodes' } )
+        assert.equal(action, 'ADD')
+        assert.deepEqual( options, {
+          id : 'zappa',
+          color : 'blue',
+          name : 'Frank Zappa',
+          longitude: 1.23,
+          latitude: 1.23,
+          starred : false
+        })
+
+      })
+
+    })
 
 
     describe('link creation', () => {

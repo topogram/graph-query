@@ -84,8 +84,7 @@ class TopoQuery {
   */
   parseAction(a, type, q) {
     let action = ( a == undefined ) ? 'show' : a  // default action
-
-    if( this.actions.indexOf(action) > 0 ) return action.toUpperCase()
+    if( this.actions.indexOf(action) > -1 ) return action.toUpperCase()
     else if ( type == 'edges' ) throw new Error('Unkown action : '+ action + ' in :' + q)
     else return 'LINK' // create a link
   }
@@ -101,11 +100,13 @@ class TopoQuery {
 
     let options = {}
 
-    if (action == 'SET') {
+    if (action == 'SET' || action == 'ADD') {
       opts.forEach(o => {
         let q = o.split(':')
         if(q.length > 2) throw new Error('Malformed options query : '+ q)
-        options[ q[0] ] = isNaN( q[1] )  ? q[1] : parseFloat(q[1])
+
+        // check if Nan
+        options[ q[0] ] = ( q[1] === 'true' || q[1] === 'false') ? JSON.parse( q[1] ) : isNaN( q[1] )  ? q[1] : parseFloat(q[1])
       })
       return options
 
@@ -115,6 +116,7 @@ class TopoQuery {
       throw new Error('Unkown method '+ action +' in : ' +q)
     }
   }
+
 
 
   /**
@@ -135,7 +137,7 @@ class TopoQuery {
 
     let action = this.parseAction(query[1])
 
-    let options = ( action == 'SET' || action == 'LINK' ) ? this.parseOptions( action, query.slice(2), q ) : null
+    let options = ( ['SET', 'LINK', 'ADD'].indexOf(action) > -1 ) ? this.parseOptions( action, query.slice(2), q ) : null
 
     return {
       selector,

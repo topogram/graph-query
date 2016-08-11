@@ -59,19 +59,6 @@ const commit = new Commit(...queries)
 
 console.log( commit )
 
-/*
-{ add:
-   [ { id: 'Jon', elType: 'nodes', color: 'blue' },
-     { id: 'Jack', elType: 'nodes' },
-     { id: 'Joe', elType: 'nodes' },
-     { id: 'Jack', elType: 'nodes' },
-     { id: 'Jack', elType: 'nodes' },
-     { id: 'Jack', elType: 'nodes' }
-   ],
-  update: [],
-  delete: []
-}
-*/
 
 ```
 

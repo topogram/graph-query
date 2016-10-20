@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/topogram/topoquery.svg?branch=master)](https://travis-ci.org/topogram/topoquery)
 
-  Ongoing work - not ready to use yet
+    Ongoing work - not ready to use yet
 
 **Topoquery** is a simple query system to create and manipulate networks and graphs.
 

@@ -7,6 +7,7 @@ const gulp = require( 'gulp' ),
     livereload = require( 'gulp-livereload' ),
     eslint = require('gulp-eslint'),
     mocha = require('gulp-mocha'),
+    gutil = require('gulp-util'),
     envify = require('envify'),
     documentation = require('gulp-documentation'),
     babel = require('babel-core/register')
@@ -39,7 +40,8 @@ gulp.task( 'dev', () => {
 
 gulp.task( 'watch', [ 'lint', 'dev'], () => {
     livereload.listen()
-    gulp.watch( './src/js/*.js', [ 'dev', 'test', 'lint' ] )
+    gulp.watch( [TEST_FILES, JS_FILES], [ 'dev', 'test', 'lint' ] )
+
 } )
 
 
@@ -60,6 +62,7 @@ gulp.task( 'test', /*['pre:coverage'],*/ () => {
         ]
       })
       .pipe( mocha( { reporter:'nyan' } ) )
+      .on('error',  gutil.log)
       // .pipe(istanbul.writeReports())
 } )
 

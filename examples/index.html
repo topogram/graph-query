@@ -1,0 +1,215 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Topoquery - Example</title>
+
+    <style>
+        html, body{
+          height:100%;
+        }
+
+        body {
+          margin: 0;
+          padding: 0;
+          position: relative;
+        }
+
+        h1 {
+          padding: 0;
+          margin: 0;
+          opacity: 0.5;
+          font-size: 1em;
+        }
+
+        #log {
+          position: absolute;
+          bottom:20px;
+          right: 0;
+          height: 300px;
+          /*max-height:100px;*/
+          max-width:50%;
+          overflow-y: scroll;
+        }
+
+        #commit {
+          position: absolute;
+          top:0;
+          left: 0;
+        }
+
+        #cy {
+          position: fixed;
+          z-index: -999;
+          top:0;
+          left: 0;
+          width:100% ;
+          height:100% ;
+          background: #EEE;
+        }
+    </style>
+</head>
+<body>
+  <h1>Topoquery example</h1>
+  <div id="wrapper">
+
+    <form name="queryForm" onsubmit="event.preventDefault(); submitQuery()" method="post">
+      Query: <input type="text" name="query">
+      <input type="submit" value="Submit">
+    </form>
+
+    <div id="cy"></div>
+    <ul id="log"></ul>
+    <div id="commitsCount"></div>
+    <div id="commits"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/2.7.7/cytoscape.min.js" ></script>
+  <script src="../dist/js/topoquery.js"></script>
+
+  <script>
+
+    const commits = [],
+          queries = []
+
+    const logger = document.getElementById('log')
+    const commitsList = document.getElementById('commits')
+    const cy = initCytoscape()
+
+    function submitQuery() {
+
+      let q = document.forms["queryForm"]["query"].value
+
+      if (q) {
+
+        let topo = new TopoQuery(q)
+        let commit = new Commit(topo)
+
+        // clear list
+        commitsList.innerHTML = ''
+        logger.innerHTML = ''
+
+        // check if changes
+        if(commit.diff.add.length || commit.diff.update.length || commit.diff.delete.length) {
+          commits.push(commit) // store commits
+          queries.push(topo)
+        }
+
+        // write log
+        queries.map( (q,i) => { // add items
+          let li = document.createElement('li')
+          let a = document.createElement('a')
+            a.innerHTML= q.q
+            a.href= `#${commits[i].id}`
+            a.setAttribute('data-commit', commits[i].id)
+            a.onclick = click
+          commitsList.appendChild(li)
+            .appendChild(a)
+        })
+
+        // add commits number
+        document.getElementById('commitsCount').innerHTML = commits.length + " commits."
+
+        // create graph
+        let g = []
+
+        commits.forEach( commit => {
+          console.log(commit)
+          log('---- apply commit '+ commit.id + ' ----')
+
+          // ADD
+          if(commit.diff.add.length) {
+            log('ADD ' + commit.diff.add.length + ' elements')
+            g = g.concat(commit.diff.add)
+          }
+
+          // DELETE
+          if(commit.diff.delete.length) {
+            log('DELETE '+commit.diff.delete.length+' nodes')
+            g = g.filter(el => commit.diff.delete.indexOf(el.id))
+          }
+        })
+
+        //parse elements for display in cytoscape
+        g = g.map( (el,i) => {
+
+          let element = {
+            group : el.elType,
+            data : {
+              id : el.id || randomId()
+            }
+          }
+          delete el.id // remove id to prevent value override
+
+          // parse existing values
+          Object.keys(el).map(key => element.data[key] = el[key])
+
+          if (el.elType == "nodes")
+            element.position = {
+              x: i*75 + 200,
+              y : i%2*150 + 200
+            }
+          else if (el.elType == "edges") {
+            element.source = el.source
+            element.target = el.target
+          }
+
+          return element
+        })
+
+        console.log(g)
+        log(g.length + " elements in the graph")
+
+        cy.remove('*')
+        cy.json({ elements : g })
+      }
+    }
+
+    function click(e) {
+      console.log(this.dataset.commit)
+    }
+
+    function log(message) {
+      logger.innerHTML = logger.innerHTML + '<br>' + message
+    }
+
+    function randomId() {
+        return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4)
+    }
+
+    // draw empty graph
+    function initCytoscape() {
+      return cytoscape({
+        container: document.getElementById('cy'),
+        boxSelectionEnabled: false,
+        layout: {　name: 'preset'　},
+        style: [
+          {
+            selector: 'node',
+            style: {
+              'height': 20,
+              'width': 20,
+              'background-color': d => d.data('color') ? d.data('color') : '#18e018',
+              'label': d => d.data('name') ? d.data('name') : ''
+            }
+          },
+
+          {
+            selector: 'edge',
+            style: {
+              'curve-style': 'haystack',
+              'haystack-radius': 0,
+              'width': 5,
+              'opacity': 0.5,
+              'line-color': '#a2efa2'
+            }
+          }
+        ]
+      })
+    }
+
+  </script>
+  <!-- <script src="./commits.js" defer></script> -->
+</body>
+</html>

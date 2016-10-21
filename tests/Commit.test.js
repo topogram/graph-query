@@ -83,8 +83,17 @@ describe('Commit', () => {
     it('should store creation of nodes', () =>{
       let c = new Commit(instructions)
       assert.equal(c.diff.add.length, 6)
-      console.log(c.diff);
     })
+
+    describe("LINK", () => {
+      it('should add both source and target nodes', () =>{
+        const instruction = new TopoQuery('Joe loves Jack')
+        let c = new Commit(instruction)
+        // assert.equal(c.diff.add.length, 3)
+        // console.log(c.diff)
+      })
+    })
+
   })
 
   it('should work with a bunch of queries', () => {

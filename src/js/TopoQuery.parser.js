@@ -1,5 +1,5 @@
 /**
- * TopoQueryParser is a parser for topogram-style query for network manipulations
+ * TopoQuery is a parser for topogram-style query for network manipulations
  *
  * @name TopoQuery
  * @kind class
@@ -38,9 +38,7 @@ class TopoQuery {
 
     let type = 'nodes' // default type
     if (s.slice(0, 4) == 'edge') type = 'edges'
-
     let selector = {}
-
     switch(s.split(':').length) {
       case 1:
         switch(s) {
@@ -60,17 +58,18 @@ class TopoQuery {
       case 2:
         // single element by ID
         selector = { 'elType' : type };
-        const split = s.split(':')
+        let split = s.split(':')
         if (split[0] === 'node' || split[0] === 'edge' ) selector.id = split[1]
         else if (split[0] === 'elType') throw new Error('Reserved word "elType" in ' + q )
         else selector[ split[0] ] = split[1]
         break;
       case 3:
         // by props
+        split = s.split(':')
         selector = { 'elType' : type }
-        selector[ s.split(':')[1] ] = s.split(':')[2]
-        // console.log(s.split(' '))
-        // console.log(selector);
+        if (split[0] === 'node' || split[0] === 'edge' ) selector.elType = split[0]+"s"
+        selector[ split[1] ] = split[2]
+        console.log(selector)
         break;
       default:
         throw new Error('Selector ' + s + ' is too long : '+q)

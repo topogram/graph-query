@@ -1,8 +1,8 @@
 import Commit from './TopoQuery.commit.js'
-import TopoQueryParser from './TopoQuery.parser.js'
+import TopoQuery from './TopoQuery.parser.js'
 
-global.TopoQueryParser = TopoQueryParser
-window.TopoQueryParser = TopoQueryParser
+global.TopoQuery = TopoQuery
+window.TopoQuery = TopoQuery
 
 // add commit
 global.Commit = Commit

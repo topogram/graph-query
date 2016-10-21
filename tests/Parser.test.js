@@ -140,6 +140,20 @@ describe('commands', () => {
       assert.deepEqual( options, {'id' : 'Jim', 'elType' : 'nodes'} )
     })
 
+    it('creates a selector node and a target', ()=>{
+      const { selector, action, options } = new TopoQuery('node:color:blue loves Jim')
+      assert.deepEqual( selector, {'color' : 'blue', 'elType': 'nodes'} )
+      assert.equal(action, 'LINK')
+      assert.deepEqual( options, {'id' : 'Jim', 'elType' : 'nodes'} )
+    })
+
+    it('creates a selector target', ()=>{
+      const { selector, action, options } = new TopoQuery('Jim loves node:color:blue')
+      assert.deepEqual( selector, {'id' : 'Jim', 'elType' : 'nodes'} )
+      assert.equal(action, 'LINK')
+      assert.deepEqual( options, {'color' : 'blue', 'elType': 'nodes'} )
+    })
+
   })
 
   describe('SET (update properties)', () => {

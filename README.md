@@ -6,7 +6,7 @@
 
 **Topoquery** is a simple query system to create and manipulate states of networks and graphs.
 
-*"But why ?"*, you may wonder. Because there is no simple, portable and lightweight language to write and store networks - to my knowledge at least (if you know one, please share in #2). 
+*"But why ?"*, you may wonder. Because there is no simple, portable and lightweight language to write and store networks - to our knowledge at least (if you know one, please [let us know](https://github.com/topogram/topoquery/issues/2)). 
 
 ## How it Works
 

@@ -6,7 +6,7 @@
 
 **Topoquery** is a simple query system to create and manipulate states of networks and graphs.
 
-*"But why ?"*, you may wonder. Because there is no simple, portable and lightweight language to write and store networks. Also because [Cypher](https://neo4j.com/developer/cypher-query-language/) and [Gremlin](https://github.com/tinkerpop/gremlin/wiki) gives me headaches and does not help to store successive states of your graphs.
+*"But why ?"*, you may wonder. Because there is no simple, portable and lightweight language to write and store networks - to my knowledge at least (if you know one, please share in #2). 
 
 ## How it Works
 

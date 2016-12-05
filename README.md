@@ -10,11 +10,7 @@
 
 ## How it Works
 
-It is super simple :
-
-* You input **queries** in plain text or via command-line to select nodes / edges and apply actions on them (add, delete, show, hide, etc).
-* All modifications are stored using **commits**, so you can easily maintain a clean state of you graphs and do / undo / moderate changes.
-* Everything is serializable in **JSON**, so all data can be stored in databases, plain files or just plain arrays.
+It is super simple : you input **queries** in plain text or via command-line to select nodes / edges and apply actions on them (add, delete, show, hide, etc).
 
 It works with node or in the browser -- see the [`/examples`](/examples) folder.
 
@@ -40,26 +36,6 @@ console.log(query)
     }
   }
 */
-
-```
-
-```js
-
-const qs = [
-  'node add id:Jon color:blue',
-  'node add id:Jack',
-  'node add id:Joe',
-  'Joe likes Jack',
-  'Jon hates Jack',
-  'Jon ignores Jack',
-]
-
-const queries = qs.map(q => new Query(q) )
-
-const commit = new Commit(...queries)
-
-console.log( commit )
-
 
 ```
 

@@ -70,8 +70,7 @@
 
   <script>
 
-    const commits = [],
-          queries = []
+    const queries = []
 
     const logger = document.getElementById('log')
     const commitsList = document.getElementById('commits')
@@ -84,78 +83,62 @@
       if (q) {
 
         let topo = new TopoQuery(q)
-        let commit = new Commit(topo)
 
         // clear list
-        commitsList.innerHTML = ''
         logger.innerHTML = ''
 
-        // check if changes
-        if(commit.diff.add.length || commit.diff.update.length || commit.diff.delete.length) {
-          commits.push(commit) // store commits
-          queries.push(topo)
-        }
+        console.log(topo)
+        queries.push(topo)
 
         // write log
         queries.map( (q,i) => { // add items
           let li = document.createElement('li')
           let a = document.createElement('a')
             a.innerHTML= q.q
-            a.href= `#${commits[i].id}`
-            a.setAttribute('data-commit', commits[i].id)
+            a.href= `#${q.id}`
+            a.setAttribute('data-commit', q.id)
             a.onclick = click
           commitsList.appendChild(li)
             .appendChild(a)
         })
 
         // add commits number
-        document.getElementById('commitsCount').innerHTML = commits.length + " commits."
+        document.getElementById('commitsCount').innerHTML = queries.length + " commits."
 
         // create graph
+
         let g = []
+        queries.forEach( (d,i) => {
+          let { action, selector, options} = d
 
-        commits.forEach( commit => {
-          console.log(commit)
-          log('---- apply commit '+ commit.id + ' ----')
+          let group = selector.elType
 
-          // ADD
-          if(commit.diff.add.length) {
-            log('ADD ' + commit.diff.add.length + ' elements')
-            g = g.concat(commit.diff.add)
+          // parse data
+          let data = options
+          data.id = selector.id || randomId()
+
+          switch(action) {
+            case 'ADD':
+              console.log("add")
+
+              let position = group == "nodes" ? {
+                  x: i*75 + 200,
+                  y : i%2*150 + 200
+                } : null
+
+              g.push({
+                group,
+                data,
+                position
+              })
+
+              break;
+            case 'DELETE':
+              console.log("delete")
+              break;
+            default:
+              console.log("unknown")
           }
-
-          // DELETE
-          if(commit.diff.delete.length) {
-            log('DELETE '+commit.diff.delete.length+' nodes')
-            g = g.filter(el => commit.diff.delete.indexOf(el.id))
-          }
-        })
-
-        //parse elements for display in cytoscape
-        g = g.map( (el,i) => {
-
-          let element = {
-            group : el.elType,
-            data : {
-              id : el.id || randomId()
-            }
-          }
-          delete el.id // remove id to prevent value override
-
-          // parse existing values
-          Object.keys(el).map(key => element.data[key] = el[key])
-
-          if (el.elType == "nodes")
-            element.position = {
-              x: i*75 + 200,
-              y : i%2*150 + 200
-            }
-          else if (el.elType == "edges") {
-            element.source = el.source
-            element.target = el.target
-          }
-
-          return element
         })
 
         console.log(g)

@@ -1,5 +1,5 @@
 import { assert }  from 'chai'
-import TopoQuery  from '../src/js/TopoQuery.parser.js'
+import TopoQuery  from '../src/js/TopoQuery.js'
 
 import queries from './queries.js'
 
@@ -26,7 +26,7 @@ describe('parser', () => {
 
   it('should return the complete parsed query', ()=>{
     const q = new TopoQuery('John loves Jim')
-    assert.deepEqual(Object.keys(q), ['q', 'selector', 'action', 'options'])
+    assert.deepEqual(Object.keys(q), ['id', 'q', 'selector', 'action', 'options'])
   })
 
   it('should parse a basic query', ()=>{
@@ -240,9 +240,18 @@ describe('commands', () => {
 
 })
 
-describe('queries OK', () => {
-  it('should parse all those queries correctly', () => {
-    const instructions = queries.map(q => new TopoQuery(q))
-    assert.equal(queries.length, instructions.length)
-  })
-})
+// describe('multiple queries OK', () => {
+//   it('should parse all those queries correctly', () => {
+//     const instructions = queries.map(q => new TopoQuery(q))
+//     assert.equal(queries.length, instructions.length)
+//   })
+//
+//   it('should handle creation of successive nodes correctly', () => {
+//
+//     const { selector, action, options } = new TopoQuery('node add Jim')
+//     console.log(selector, action, options);
+//     assert.deepEqual( selector, {'name' : 'Jim', id : null, 'elType': 'nodes'} )
+//     assert.equal(action, 'ADD')
+//
+//   })
+// })

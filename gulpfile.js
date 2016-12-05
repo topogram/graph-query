@@ -10,7 +10,12 @@ const gulp = require( 'gulp' ),
     gutil = require('gulp-util'),
     envify = require('envify'),
     documentation = require('gulp-documentation'),
-    babel = require('babel-core/register')
+    babel = require('babel-core/register'),
+    deploy = require('gulp-gh-pages')
+    replace = require('gulp-replace'),
+    rename = require('gulp-rename')
+    ;
+
     // istanbul = require('gulp-istanbul');
 
 
@@ -95,3 +100,20 @@ gulp.task('doc', () => {
         .pipe( documentation( { shallow: true, format: 'html' } ) )
         .pipe( gulp.dest( 'docs' ) )
 } )
+
+// Deploy to gh-pages
+gulp.task('prepare-deploy', function(){
+  gulp.src(['examples/index.html'])
+    .pipe(replace('../dist/js/', 'js/'))
+    .pipe(gulp.dest('build/'));
+});
+
+gulp.task('deploy', ['doc', 'prepare-deploy'], function () {
+
+  gulp.src('docs/index.html')
+      .pipe(rename('doc.html'))
+      .pipe(gulp.dest('docs'));
+
+  return gulp.src(["./dist/**/*", './docs/**/*', 'build/index.html'])
+    .pipe(deploy())
+});

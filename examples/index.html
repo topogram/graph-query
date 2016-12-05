@@ -76,8 +76,6 @@
 
       if (q) {
 
-        console.log(new TopoQuery(q))
-
         // push to main list
         queries.push(new TopoQuery(q))
 
@@ -95,27 +93,27 @@
 
           let group = selector.elType
 
-          // parse data
-          let data = options
-          data.id = options.id || randomId()
-          data.name = options.name || data.id
-
           switch(action) {
             case 'ADD':
-              let position = group == "nodes" ? {
-                  x: i*75 + 200,
-                  y : i%2*150 + 200
-                } : null
-
-              g.push({
-                group,
-                data,
-                position
-              })
-
+              let n = createNode(options)
+              g.push(n)
               break;
             case 'LINK':
-              console.log("link")
+
+              // check if nodes exists else create it
+              let source = getOrCreateNode(selector)
+              let target = getOrCreateNode(options.target)
+
+              g.push(source, target, {
+                group : "edges",
+                data : {
+                  name : options.link,
+                  id : randomId(),
+                  source : source.data.id,
+                  target : target.data.id
+                }
+              })
+
               break;
             case 'DELETE':
               console.log("delete")
@@ -129,6 +127,34 @@
 
         cy.remove('*')
         cy.json({ elements : g })
+      }
+    }
+
+    function getOrCreateNode(data) {
+
+      let selector = Object.keys(data)
+        .filter( d => d != "elType" )
+        .map( d => '[' + [ d , '"' + data[d] + '"'].join('=') + ']' )
+        .join('')
+
+      console.log(selector)
+
+      return cy.nodes(selector).length ?
+        cy.nodes(selector).json()
+        :
+        createNode(data)
+
+    }
+
+    function createNode(data) {
+      data.name = data.name || data.id // default text
+      return {
+        group: "nodes",
+        data : data,
+        position : {
+          x: Math.floor(Math.random()*500)+100,
+          y : Math.floor(Math.random()*500)+100
+        }
       }
     }
 
@@ -156,11 +182,9 @@
           {
             selector: 'edge',
             style: {
-              'curve-style': 'haystack',
-              'haystack-radius': 0,
               'width': 5,
-              'opacity': 0.5,
-              'line-color': '#a2efa2'
+              'label': d => d.data('name') ? d.data('name') : '',
+              'line-color': 'blue'
             }
           }
         ]

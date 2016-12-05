@@ -75,7 +75,6 @@ class TopoQuery {
         selector = { 'elType' : type }
         if (split[0] === 'node' || split[0] === 'edge' ) selector.elType = split[0]+"s"
         selector[ split[1] ] = split[2]
-        console.log(selector)
         break;
       default:
         throw new Error('Selector ' + s + ' is too long : '+q)
@@ -100,10 +99,12 @@ class TopoQuery {
 
   /**
   * @name parseOptions
-  * @param {String} options The options for the command
-  * @returns { Array } array of options properly parsed
+  * @param {String} action The type of action in capitals
+  * @param {Array} opts The list of options and selectors
+  * @param {String} q The original query
+  * @returns { Object } options properly parsed
   */
-  parseOptions(action, opts, q) {
+  parseOptions(action, opts, q, linkName) {
     if (opts == undefined || opts.length == 0)
       throw new Error('Query options for '+ action +' can not be undefined : ' +q )
 
@@ -131,13 +132,16 @@ class TopoQuery {
       return options
 
     } else if (action == 'LINK' || action == 'MERGE' ) {
-      return this.parseSelector(...opts)
+
+      return {
+        link : linkName,
+        target: this.parseSelector(...opts)
+      }
+
     } else {
       throw new Error('Unkown method '+ action +' in : ' +q)
     }
   }
-
-
 
   /**
   * The main function for the parser
@@ -157,7 +161,8 @@ class TopoQuery {
 
     let action = this.parseAction(query[1])
 
-    let options = ( ['SET', 'LINK', 'ADD', 'MERGE'].indexOf(action) > -1 ) ? this.parseOptions( action, query.slice(2), q ) : null
+    let options = ( ['SET', 'LINK', 'ADD', 'MERGE'].indexOf(action) > -1 ) ? this.parseOptions( action, query.slice(2), q, query[1]) : null
+
 
     return {
       selector,

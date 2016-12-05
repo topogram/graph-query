@@ -104,9 +104,23 @@ describe('parser', () => {
 
   describe('options', () => {
 
-    it('should assign default name props if not specfied', ()=>{
-      const { options } = new TopoQuery('node add david')
-      assert.deepEqual(options, {'id' : 'david'})
+    describe('ADD', () => {
+      it('should assign default name props if not specfied', ()=>{
+        const { options } = new TopoQuery('node add david')
+        assert.deepEqual(options, {'id' : 'david'})
+      })
+    })
+
+    describe('LINK', () => {
+      it('should store link description', ()=>{
+        const { options } = new TopoQuery('john loves david')
+        assert.deepEqual(options,
+          { target :
+            {'id' : 'david', "elType": "nodes"}, 
+            link : 'loves'
+        }
+        )
+      })
     })
 
   })

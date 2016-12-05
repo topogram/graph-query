@@ -23,7 +23,7 @@
           font-size: 1em;
         }
 
-        #log {
+        #commits {
           position: absolute;
           bottom:20px;
           right: 0;
@@ -31,12 +31,6 @@
           /*max-height:100px;*/
           max-width:50%;
           overflow-y: scroll;
-        }
-
-        #commit {
-          position: absolute;
-          top:0;
-          left: 0;
         }
 
         #cy {
@@ -60,7 +54,6 @@
     </form>
 
     <div id="cy"></div>
-    <ul id="log"></ul>
     <div id="commitsCount"></div>
     <div id="commits"></div>
   </div>
@@ -71,44 +64,33 @@
   <script>
 
     const queries = []
-
-    const logger = document.getElementById('log')
     const commitsList = document.getElementById('commits')
     const cy = initCytoscape()
+
 
     function submitQuery() {
 
       let q = document.forms["queryForm"]["query"].value
 
+      clearLog() // clean list of actions
+
       if (q) {
 
         let topo = new TopoQuery(q)
-
-        // clear list
-        logger.innerHTML = ''
-
         console.log(topo)
-        queries.push(topo)
 
-        // write log
-        queries.map( (q,i) => { // add items
-          let li = document.createElement('li')
-          let a = document.createElement('a')
-            a.innerHTML= q.q
-            a.href= `#${q.id}`
-            a.setAttribute('data-commit', q.id)
-            a.onclick = click
-          commitsList.appendChild(li)
-            .appendChild(a)
-        })
+        // push to main list
+        queries.push(topo)
 
         // add commits number
         document.getElementById('commitsCount').innerHTML = queries.length + " commits."
 
         // create graph
-
         let g = []
         queries.forEach( (d,i) => {
+
+          addCommitToLog(d) // write log to screen
+
           let { action, selector, options} = d
 
           let group = selector.elType
@@ -119,8 +101,6 @@
 
           switch(action) {
             case 'ADD':
-              console.log("add")
-
               let position = group == "nodes" ? {
                   x: i*75 + 200,
                   y : i%2*150 + 200
@@ -133,6 +113,8 @@
               })
 
               break;
+            case 'LINK':
+              console.log("link")
             case 'DELETE':
               console.log("delete")
               break;
@@ -142,7 +124,6 @@
         })
 
         console.log(g)
-        log(g.length + " elements in the graph")
 
         cy.remove('*')
         cy.json({ elements : g })
@@ -151,14 +132,6 @@
 
     function click(e) {
       console.log(this.dataset.commit)
-    }
-
-    function log(message) {
-      logger.innerHTML = logger.innerHTML + '<br>' + message
-    }
-
-    function randomId() {
-        return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4)
     }
 
     // draw empty graph
@@ -190,6 +163,28 @@
           }
         ]
       })
+    }
+
+    function clearLog() {
+      while( commitsList.firstChild ){
+        commitsList.removeChild( commitsList.firstChild );
+      }
+    }
+
+    function addCommitToLog(q) {
+      // logger.innerHTML = logger.innerHTML + '<br>' + message
+      let li = document.createElement('li')
+      let a = document.createElement('a')
+        a.innerHTML= `${q.action} : ${q.q}`
+        a.href= `#${q.id}`
+        a.setAttribute('data-commit', q.id)
+        a.onclick = click
+      commitsList.appendChild(li)
+        .appendChild(a)
+    }
+
+    function randomId() {
+        return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4)
     }
 
   </script>

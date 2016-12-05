@@ -76,11 +76,10 @@
 
       if (q) {
 
-        let topo = new TopoQuery(q)
-        console.log(topo)
+        console.log(new TopoQuery(q))
 
         // push to main list
-        queries.push(topo)
+        queries.push(new TopoQuery(q))
 
         // add commits number
         document.getElementById('commitsCount').innerHTML = queries.length + " commits."
@@ -89,15 +88,17 @@
         let g = []
         queries.forEach( (d,i) => {
 
+          console.log(d)
           addCommitToLog(d) // write log to screen
 
-          let { action, selector, options} = d
+          let { action, selector, options　} = d
 
           let group = selector.elType
 
           // parse data
           let data = options
-          data.id = selector.id || randomId()
+          data.id = options.id || randomId()
+          data.name = options.name || data.id
 
           switch(action) {
             case 'ADD':
@@ -115,6 +116,7 @@
               break;
             case 'LINK':
               console.log("link")
+              break;
             case 'DELETE':
               console.log("delete")
               break;

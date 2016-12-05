@@ -111,11 +111,22 @@ class TopoQuery {
 
     if (action == 'SET' || action == 'ADD') {
       opts.forEach(o => {
-        let q = o.split(':')
-        if(q.length > 2) throw new Error('Malformed options query : '+ q)
 
-        // check if Nan
-        options[ q[0] ] = ( q[1] === 'true' || q[1] === 'false') ? JSON.parse( q[1] ) : isNaN( q[1] )  ? q[1] : parseFloat(q[1])
+        let q = o.split(':')
+
+        if(q.length > 2)
+          throw new Error('Malformed options query : '+ q)
+        else if (q.length == 1)
+          options["id"] = q[0] // set default to id
+        else
+          // check if Nan
+          options[ q[0] ] =
+            ( q[1] === 'true' || q[1] === 'false')
+            ?
+            JSON.parse( q[1] )
+              : isNaN( q[1] )
+              ?
+              q[1] : parseFloat(q[1])
       })
       return options
 

@@ -1,270 +1,154 @@
-<!doctype html>
-<html>
-<head>
-  <meta charset='utf-8' />
-  <title>  | Documentation</title>
-  <meta name='viewport' content='width=device-width,initial-scale=1'>
-  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Source+Code+Pro:400,500,700' rel='stylesheet' type='text/css'>
-  <link href='assets/bass.css' type='text/css' rel='stylesheet' />
-  <link href='assets/style.css' type='text/css' rel='stylesheet' />
-  <link href='assets/github.css' type='text/css' rel='stylesheet' />
-</head>
-<body class='documentation'>
-  <div class='container'>
-    <div class='clearfix md-mxn2'>
-      <div class='fixed md-show fix-3 overflow-auto max-height-100'>
-        <div class='py1 px2'>
-          <h3 class='mb0 no-anchor'></h3>
-          <div class='mb1'><code></code></div>
-          <input
-            placeholder='Filter'
-            id='filter-input'
-            class='col12 block field'
-            type='text' />
-          <div id='toc'>
-              <a
-                href='#TopoQuery'
-                class='block bold'>
-                TopoQuery
-              </a>
-                <a
-                  href='#TopoQuery.parse'
-                  class='regular block'>
-                  #parse
-                </a>
-                <a
-                  href='#TopoQuery.parseAction'
-                  class='regular block'>
-                  #parseAction
-                </a>
-                <a
-                  href='#TopoQuery.parseOptions'
-                  class='regular block'>
-                  #parseOptions
-                </a>
-                <a
-                  href='#TopoQuery.parseSelector'
-                  class='regular block'>
-                  #parseSelector
-                </a>
-          </div>
-        </div>
-      </div>
-      <div class='fix-margin-3'>
-        <div class='px2'>
-<div class='py1'><section class='py2 clearfix'>
-  <h2 id='TopoQuery' class='mt0'>
-    TopoQuery<span class='gray'>(q)</span>
-  </h2>
-  <p>TopoQuery is a parser for topogram-style query for network manipulations</p>
+<!DOCTYPE html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Topoquery</title>
+    <link rel="stylesheet" href="css/markdown.css">
+  </head>
+  <body>
+    <section class="doc-nav"></section>
+    <section class="doc-content">
+      <h1 id="topoquery">Topoquery</h1>
+<p><strong>Topoquery</strong> is a simple query system to create and manipulate states of networks and graphs.</p>
+<p><em>&quot;But why ?&quot;</em>, you may wonder. Because there is no simple, portable and lightweight language to write and store networks - to our knowledge at least (if you know one, please <a href="https://github.com/topogram/topoquery/issues/2">let us know</a>).</p>
+<h2 id="how-it-works">How it Works</h2>
+<p>It is super simple : you input <strong>queries</strong> in plain text or via command-line to select nodes / edges and apply actions on them (add, delete, show, hide, etc).</p>
+<p>It works with node or in the browser -- see the <a href="/examples"><code>/examples</code></a> folder.</p>
 
-    <h4>Parameters</h4>
-    <ul class='suppress-p-margin'>
-        <li><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code> <strong>q</strong>
-          :
-          <div class='force-inline'>
-            <p>The query</p>
+<h1 id="query-structure">Query structure</h1>
+<pre><code>selector [ command ] [ options ]
+</code></pre><p>ex.</p>
+<ul>
+<li><code>John</code> <code>show</code></li>
+<li><code>type:animals</code> <code>hide</code></li>
+<li><code>dog likes bones</code> <code>set</code> <code>type:normal</code></li>
+</ul>
+<p>The query will returns a JSON object containing the command</p>
+<h3 id="commands">Commands</h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+<th>Options</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>create</code></td>
+<td>create a new node or edge</td>
+<td></td>
+</tr>
+<tr>
+<td><code>show</code></td>
+<td>(default) show elements based on a selector</td>
+<td></td>
+</tr>
+<tr>
+<td><code>hide</code></td>
+<td>hide elements based on a selector</td>
+<td></td>
+</tr>
+<tr>
+<td><code>set</code></td>
+<td>set properties for a node or an edge</td>
+<td>A comma-separated list of <code>key:value</code></td>
+</tr>
+<tr>
+<td><code>merge</code></td>
+<td>merge nodes together</td>
+<td>A node</td>
+</tr>
+<tr>
+<td><code>clear</code></td>
+<td>clear all previous selections</td>
+</tr>
+</tbody>
+</table>
+<h3 id="properties-and-selectors">Properties and selectors</h3>
+<p>A property/selector is described as <code>name:value</code></p>
+<table>
+<thead>
+<tr>
+<th>Selector</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nodes</code></td>
+<td>get all nodes</td>
+</tr>
+<tr>
+<td><code>edges</code></td>
+<td>get all edges</td>
+</tr>
+<tr>
+<td><code>node:id</code></td>
+<td>get an edge by id</td>
+</tr>
+<tr>
+<td><code>edge:id</code></td>
+<td>get an edge by id</td>
+</tr>
+<tr>
+<td><code>nodes:key:value</code></td>
+<td>get all edges where key == value</td>
+</tr>
+<tr>
+<td><code>edges:key:value</code></td>
+<td>get all edges where key == value</td>
+</tr>
+<tr>
+<td><code>cyto:selector</code></td>
+<td>use a <a href="http://js.cytoscape.org/#selectors">cytoscape selector</a></td>
+</tr>
+</tbody>
+</table>
+<p>Read the <a href="https://github.com/topogram/topogram/wiki/Topogram-graph-query-syntax">original SPEC</a> for more</p>
 
-          </div>
-        </li>
-    </ul>
-    <h4>Examples</h4>
-<pre class='overflow-auto'><span class="hljs-keyword">const</span> q = <span class="hljs-keyword">new</span> TopoQuery(<span class="hljs-string">'nodes show'</span>);</pre>
-      <h4>Instance members</h4>
-        <div class='collapsible' id='TopoQuery.parse'>
-          <a href='#TopoQuery.parse'>
-            <code>
-              #parse<span class='gray'>(q)</span>
-            </code>
-            <div class='force-inline'>
-              <p>The main function for the parser</p>
+<h1 id="topoquery">TopoQuery</h1>
+<p>TopoQuery is a parser for topogram-style query for network manipulations</p>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><code>q</code> <strong>String</strong> The query</li>
+</ul>
+<p><strong>Examples</strong></p>
+<pre><code class="lang-javascript">const q = new TopoQuery(&#39;nodes show&#39;);
+</code></pre>
+<h2 id="parse">parse</h2>
+<p>The main function for the parser</p>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><code>q</code> <strong>String</strong> the query</li>
+</ul>
+<p>Returns <strong>Object</strong> An object containing selection and action</p>
+<h2 id="parseaction">parseAction</h2>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><code>a</code> <strong>String</strong> The action to be executed</li>
+<li><code>type</code> <strong>String</strong> The type of elements (nodes or edges)</li>
+<li><code>q</code> <strong>String</strong> The original query</li>
+</ul>
+<p>Returns <strong>Object</strong> </p>
+<h2 id="parseoptions">parseOptions</h2>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><code>action</code> <strong>String</strong> The type of action in capitals</li>
+<li><code>opts</code> <strong>Array</strong> The list of options and selectors</li>
+<li><code>q</code> <strong>String</strong> The original query</li>
+<li><code>linkName</code>  </li>
+</ul>
+<p>Returns <strong>Object</strong> options properly parsed</p>
+<h2 id="parseselector">parseSelector</h2>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><code>selector</code> <strong>String</strong> the raw selector as a string</li>
+<li><code>s</code>  </li>
+<li><code>q</code>  </li>
+</ul>
+<p>Returns <strong>Object</strong> the parsed selection object</p>
 
-            </div>
-          </a>
-          <div class='collapser border px2'>
-            <section class='py2 clearfix'>
-              <h2 id='TopoQuery.parse' class='mt0'>
-                parse<span class='gray'>(q)</span>
-              </h2>
-              <p>The main function for the parser</p>
-            
-                <h4>Parameters</h4>
-                <ul class='suppress-p-margin'>
-                    <li><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code> <strong>q</strong>
-                      :
-                      <div class='force-inline'>
-                        <p>the query</p>
-            
-                      </div>
-                    </li>
-                </ul>
-                  <h4>Returns</h4>
-                  <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></code>
-                  :
-                  <div class='force-inline'>
-                    <p>An object containing selection and action</p>
-            
-                  </div>
-            </section>
-          </div>
-        </div>
-        <div class='collapsible' id='TopoQuery.parseAction'>
-          <a href='#TopoQuery.parseAction'>
-            <code>
-              #parseAction<span class='gray'>(a, type, q)</span>
-            </code>
-            <div class='force-inline'>
-              
-            </div>
-          </a>
-          <div class='collapser border px2'>
-            <section class='py2 clearfix'>
-              <h2 id='TopoQuery.parseAction' class='mt0'>
-                parseAction<span class='gray'>(a, type, q)</span>
-              </h2>
-              
-                <h4>Parameters</h4>
-                <ul class='suppress-p-margin'>
-                    <li><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code> <strong>a</strong>
-                      :
-                      <div class='force-inline'>
-                        <p>The action to be executed</p>
-            
-                      </div>
-                    </li>
-                    <li><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code> <strong>type</strong>
-                      :
-                      <div class='force-inline'>
-                        <p>The type of elements (nodes or edges)</p>
-            
-                      </div>
-                    </li>
-                    <li><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code> <strong>q</strong>
-                      :
-                      <div class='force-inline'>
-                        <p>The original query</p>
-            
-                      </div>
-                    </li>
-                </ul>
-                  <h4>Returns</h4>
-                  <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></code>
-                  
-                  <div class='force-inline'>
-                    
-                  </div>
-            </section>
-          </div>
-        </div>
-        <div class='collapsible' id='TopoQuery.parseOptions'>
-          <a href='#TopoQuery.parseOptions'>
-            <code>
-              #parseOptions<span class='gray'>(action, opts, q, linkName)</span>
-            </code>
-            <div class='force-inline'>
-              
-            </div>
-          </a>
-          <div class='collapser border px2'>
-            <section class='py2 clearfix'>
-              <h2 id='TopoQuery.parseOptions' class='mt0'>
-                parseOptions<span class='gray'>(action, opts, q, linkName)</span>
-              </h2>
-              
-                <h4>Parameters</h4>
-                <ul class='suppress-p-margin'>
-                    <li><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code> <strong>action</strong>
-                      :
-                      <div class='force-inline'>
-                        <p>The type of action in capitals</p>
-            
-                      </div>
-                    </li>
-                    <li><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></code> <strong>opts</strong>
-                      :
-                      <div class='force-inline'>
-                        <p>The list of options and selectors</p>
-            
-                      </div>
-                    </li>
-                    <li><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code> <strong>q</strong>
-                      :
-                      <div class='force-inline'>
-                        <p>The original query</p>
-            
-                      </div>
-                    </li>
-                    <li> <strong>linkName</strong>
-                      :
-                      <div class='force-inline'>
-                        
-                      </div>
-                    </li>
-                </ul>
-                  <h4>Returns</h4>
-                  <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></code>
-                  :
-                  <div class='force-inline'>
-                    <p>options properly parsed</p>
-            
-                  </div>
-            </section>
-          </div>
-        </div>
-        <div class='collapsible' id='TopoQuery.parseSelector'>
-          <a href='#TopoQuery.parseSelector'>
-            <code>
-              #parseSelector<span class='gray'>(selector, s, q)</span>
-            </code>
-            <div class='force-inline'>
-              
-            </div>
-          </a>
-          <div class='collapser border px2'>
-            <section class='py2 clearfix'>
-              <h2 id='TopoQuery.parseSelector' class='mt0'>
-                parseSelector<span class='gray'>(selector, s, q)</span>
-              </h2>
-              
-                <h4>Parameters</h4>
-                <ul class='suppress-p-margin'>
-                    <li><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code> <strong>selector</strong>
-                      :
-                      <div class='force-inline'>
-                        <p>the raw selector as a string</p>
-            
-                      </div>
-                    </li>
-                    <li> <strong>s</strong>
-                      :
-                      <div class='force-inline'>
-                        
-                      </div>
-                    </li>
-                    <li> <strong>q</strong>
-                      :
-                      <div class='force-inline'>
-                        
-                      </div>
-                    </li>
-                </ul>
-                  <h4>Returns</h4>
-                  <code><code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code></code>
-                  :
-                  <div class='force-inline'>
-                    <p>the parsed selection object</p>
-            
-                  </div>
-            </section>
-          </div>
-        </div>
-</section>
-</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script src='assets/anchor.js'></script>
-  <script src='assets/site.js'></script>
-</body>
-</html>
+    </section>
+  </body>

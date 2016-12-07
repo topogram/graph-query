@@ -1,8 +1,9 @@
+tmp
+
 build
 .publish
 dist
 devTest
-docs
 
 # Logs
 logs

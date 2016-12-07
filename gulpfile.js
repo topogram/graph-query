@@ -1,4 +1,5 @@
 const gulp = require( 'gulp' ),
+    fs = require("fs"),
     browserify = require( 'browserify' ),
     source = require( 'vinyl-source-stream' ),
     buffer = require( 'vinyl-buffer' ),
@@ -13,7 +14,9 @@ const gulp = require( 'gulp' ),
     babel = require('babel-core/register'),
     deploy = require('gulp-gh-pages')
     replace = require('gulp-replace'),
-    rename = require('gulp-rename')
+    rename = require('gulp-rename'),
+    concat = require('gulp-concat'),
+    markdown = require('gulp-markdown')
     ;
 
     // istanbul = require('gulp-istanbul');
@@ -95,11 +98,34 @@ gulp.task( 'build', [ 'test', 'lint' ], () => {
         .pipe( gulp.dest( './dist/js' ) )
 } )
 
-gulp.task('doc', () => {
-    gulp.src( [ './src/**/*.js' ] )
-        .pipe( documentation( { shallow: true, format: 'html' } ) )
-        .pipe( gulp.dest( 'docs' ) )
-} )
+  gulp.task('doc', () => {
+
+  // generate API md
+  gulp.src( [ './src/**/*.js' ] )
+      .pipe( documentation( { shallow: true, format: 'md' } ) )
+      .pipe( gulp.dest( 'docs' ) )
+
+  //
+  gulp.src( [ './docs/index.md','./docs/query-syntax.md', './docs/API.md'] )
+    .pipe( markdown())
+    .pipe( concat('index.html'))
+    .pipe(rename('content.html'))
+    .pipe(gulp.dest('tmp'))
+
+  // read index.html
+  let html = fs.readFileSync("tmp/content.html", "utf-8")
+
+  // copy to build docs
+  gulp.src('./docs//templates/index.html')
+    .pipe(replace('{{CONTENT}}', html))
+    .pipe(rename('doc.html'))
+    .pipe(gulp.dest('build'));
+
+  // copy CSS deps
+  gulp.src('./docs/templates/markdown.css')
+    .pipe(gulp.dest('build/css'));
+
+})
 
 // Deploy to gh-pages
 gulp.task('prepare-deploy', function(){
@@ -108,12 +134,11 @@ gulp.task('prepare-deploy', function(){
     .pipe(gulp.dest('build/'));
 });
 
+//
 gulp.task('deploy', ['doc', 'prepare-deploy'], function () {
+  return gulp.src(["./dist/**/*", 'build/**/*'])
+    .pipe(gulp.dest('.publish/'));
+    // .pipe(deploy())
 
-  gulp.src('docs/index.html')
-      .pipe(rename('doc.html'))
-      .pipe(gulp.dest('docs'));
 
-  return gulp.src(["./dist/**/*", './docs/**/*', 'build/index.html'])
-    .pipe(deploy())
 });

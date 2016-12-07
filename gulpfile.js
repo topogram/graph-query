@@ -105,7 +105,7 @@ gulp.task( 'build', [ 'test', 'lint' ], () => {
       .pipe( documentation( { shallow: true, format: 'md' } ) )
       .pipe( gulp.dest( 'docs' ) )
 
-  //
+  //　convert markdown to HTML
   gulp.src( [ './docs/index.md','./docs/query-syntax.md', './docs/API.md'] )
     .pipe( markdown())
     .pipe( concat('index.html'))
@@ -113,7 +113,7 @@ gulp.task( 'build', [ 'test', 'lint' ], () => {
     .pipe(gulp.dest('tmp'))
 
   // read index.html
-  let html = fs.readFileSync("tmp/content.html", "utf-8")
+  var html = fs.readFileSync("tmp/content.html", "utf-8")
 
   // copy to build docs
   gulp.src('./docs//templates/index.html')
@@ -137,8 +137,6 @@ gulp.task('prepare-deploy', function(){
 //
 gulp.task('deploy', ['doc', 'prepare-deploy'], function () {
   return gulp.src(["./dist/**/*", 'build/**/*'])
-    .pipe(gulp.dest('.publish/'));
-    // .pipe(deploy())
-
+    .pipe(deploy())
 
 });

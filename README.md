@@ -1,29 +1,33 @@
 # Topoquery
 
+
+    Not ready to use yet
+
 [![Build Status](https://travis-ci.org/topogram/topoquery.svg?branch=master)](https://travis-ci.org/topogram/topoquery)
 
-**Topoquery** is a simple query system to create and manipulate states of networks and graphs.
+**Topoquery** is a simple query system to create and manipulate networks.
+
 
 ### Example
 
 ```js
 
-let query = new Query('node add color:blue name:"Frank Zappa" longitude:"1,23" latitude:"1,23" starred:false')
+let query = new Query('node color:blue name:"Frank Zappa" longitude:"1,23" latitude:"1,23" starred:false')
 
 console.log(query)
 
 /*
   {
-    q: 'node add color:blue name:"Frank Zappa" longitude:"1,23" latitude:"1,23" starred:false',
-    selector: { id: null, elType: 'nodes' },
-    action: 'ADD',
-    options: {
-      color: 'blue',
-      name: 'Frank Zappa',
-      longitude: '1,23',
-      latitude: '1,23',
-      starred: false
-    }
+    q: 'node color:blue name:"Frank Zappa" longitude:"1,23" latitude:"1,23" starred:false',
+    selector:
+      {
+        color: 'blue',
+        group : nodes,
+        name: 'Frank Zappa',
+        longitude: '1,23',
+        latitude: '1,23',
+        starred: false
+      }
   }
 */
 
